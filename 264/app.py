@@ -64,7 +64,6 @@ st.sidebar.header("Filters")
 selected_states = st.sidebar.multiselect(
     "Select:",
     options=sorted(df["state"].unique()),
-    
 )
 
 # =========================
@@ -91,7 +90,6 @@ tab_home, tab_house, tab_income, tab_insurance, tab_climate, tab_crime, tab_pm25
     "🚨 Crime",
     "💨 PM2.5"    
 ])
-
 
 with tab_home:
     # =========================
@@ -417,10 +415,10 @@ with tab_home:
         title_font=dict(size=20),
         tickfont=dict(size=20)
     ),
-    
+    legend_title_text="State (Scroll)",
     legend=dict(
-        title_font=dict(size=25),
-        font=dict(size=25),
+        title_font=dict(size=20),
+        font=dict(size=14),
         itemsizing="constant"
     ), 
     hoverlabel=dict(
@@ -647,7 +645,7 @@ with tab_pm25:
 # =========================
 # Insights
 # =========================
-st.sidebar.markdown("<div style='margin-top: 60vh;'></div>", unsafe_allow_html=True)
+st.sidebar.markdown("<div style='margin-top: 30vh;'></div>", unsafe_allow_html=True)
 st.sidebar.subheader("🧠 Insights")
 
 df_selected = plot_df.copy()
