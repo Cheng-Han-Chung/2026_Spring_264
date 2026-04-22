@@ -665,7 +665,6 @@ elif selected_page == "💨 PM2.5":
 # =========================
 # Insights
 # =========================
-st.sidebar.markdown("<div style='margin-top: 30vh;'></div>", unsafe_allow_html=True)
 st.sidebar.subheader("🧠 Insights")
 
 df_selected = plot_df.copy()
