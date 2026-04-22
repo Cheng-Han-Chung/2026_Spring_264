@@ -59,45 +59,39 @@ us_state_to_abbrev = {
 # =========================
 # Sidebar
 # =========================
-st.sidebar.title("📊 U.S. Housing Environment Analyze Dashboard")
-st.sidebar.caption("Analyze housing prices with income, air quality, climate risk, crime rate, and insurance cost.")
-st.sidebar.divider() # 🔥 加入分隔線，切分區塊
+st.sidebar.header("Filters")
 
-# 3. 導覽列區塊 (Navigation)
-st.sidebar.subheader("Navigation")
-selected_page = st.sidebar.radio(
-    "Go to:", 
-    [
-        "🌍 Overview",
-        "🏠 House",
-        "💵 Income",
-        "🛡️ Insurance",
-        "🌪️ Climate",
-        "🚨 Crime",
-        "💨 PM2.5"
-    ],
-    label_visibility="collapsed" # 🔥 關鍵設定：隱藏 radio 原本的標題，解決重複問題
-)
-# 2. 篩選器區塊 (Filters)
-st.sidebar.subheader("Filters")
 selected_states = st.sidebar.multiselect(
-    "Select states to compare:", # 稍微拉長敘述，更清楚
+    "Select:",
     options=sorted(df["state"].unique()),
-    default=[], 
-    placeholder="🔍 Choose states..." # 加入放大鏡圖示的 Placeholder
 )
+
+# =========================
+# Title
+# =========================
+st.title("🏠 Housing Environment Analyze Dashboard")
+st.markdown("""
+Analyze housing prices with income, air quality, climate risk, crime rate, and insurance cost.
+""")
+
 if len(selected_states) == 0:
-    # 使用 st.sidebar.info 會產生一個淺藍色的提示框
-    st.sidebar.info("🌎 目前顯示: All States")
+    st.subheader(" All States")
     plot_df = df
 else:
-    # 使用 st.sidebar.success 會產生一個淺綠色的提示框，代表篩選已啟動
-    # 順便加上選擇了幾個州的數量提示，會顯得更專業
-    st.sidebar.success(f"🎯 啟用篩選: Selected State Comparison ({len(selected_states)} states)")
+    st.subheader(" Selected State Comparison")
     plot_df = df[df["state"].isin(selected_states)]
-st.sidebar.divider() # 🔥 再次加入分隔線
 
-if selected_page == "🌍 Overview":
+tab_home, tab_house, tab_income, tab_insurance, tab_climate, tab_crime, tab_pm25 = st.tabs([
+    "🌎 Overview", 
+    "🏠 House",
+    "💵 Income", 
+    "🛡️ Insurance", 
+    "🌪️ Climate", 
+    "🚨 Crime",
+    "💨 PM2.5"    
+])
+
+with tab_home:
     # =========================
     # U.S. Housing Price Distribution
     # =========================
@@ -480,12 +474,11 @@ if selected_page == "🌍 Overview":
     fig_corr.update_xaxes(tickangle=-45)
 
     st.plotly_chart(fig_corr, use_container_width=True)
-    pass
 
 # ==========================================
 # 2. 🏘️ House Price 
 # ==========================================
-elif selected_page == "🏠 House":
+with tab_house:
     st.subheader("🏠 Housing Price by State")
     
     sort_house = st.radio(
@@ -510,13 +503,12 @@ elif selected_page == "🏠 House":
     
     fig_price.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_price, use_container_width=True)
-    pass
 
 
 # ==========================================
 # 3. 💵 Income 
 # ==========================================
-elif selected_page == "💵 Income":
+with tab_income:
     st.subheader("💰 Income by State")
     
     sort_income = st.radio(
@@ -540,13 +532,12 @@ elif selected_page == "💵 Income":
     fig_income.update_traces(texttemplate='%{text:,.0f}', textposition='outside')
     fig_income.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_income, use_container_width=True)
-    pass
 
 
 # ==========================================
 # 4. 🛡️ Insurance 
 # ==========================================
-elif selected_page == "🛡️ Insurance":
+with tab_insurance:
     st.subheader("🛡️ Insurance Cost by State")
     
     sort_ins = st.radio(
@@ -570,13 +561,12 @@ elif selected_page == "🛡️ Insurance":
     fig_ins.update_traces(texttemplate='%{text:,.0f}', textposition='outside')
     fig_ins.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_ins, use_container_width=True)
-    pass
 
 
 # ==========================================
 # 5. 🌪️ Climate Risk 
 # ==========================================
-elif selected_page == "🌪️ Climate":
+with tab_climate:
     st.subheader("🌪️ Climate Risk by State")
     
     sort_risk = st.radio(
@@ -600,13 +590,12 @@ elif selected_page == "🌪️ Climate":
     fig_risk.update_traces(texttemplate='%{text:.0f}', textposition='outside')
     fig_risk.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_risk, use_container_width=True)
-    pass
 
 
 # ==========================================
 # 6. 🚨 Crime 
 # ==========================================
-elif selected_page == "🚨 Crime":
+with tab_crime:
     st.subheader("🚨 Crime Rate by State")
     
     sort_crime = st.radio(
@@ -630,13 +619,12 @@ elif selected_page == "🚨 Crime":
     fig_crime.update_traces(texttemplate='%{text:.0f}', textposition='outside')
     fig_crime.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_crime, use_container_width=True)
-    pass
 
 
 # ==========================================
 # 7. 💨 PM2.5 
 # ==========================================
-elif selected_page == "💨 PM2.5":
+with tab_pm25:
     st.subheader("💨 PM2.5 by State")
     
     sort_pm25 = st.radio(
@@ -660,7 +648,6 @@ elif selected_page == "💨 PM2.5":
     fig_pm25.update_traces(texttemplate='%{text:.1f}', textposition='outside')
     fig_pm25.update_xaxes(tickmode='linear', dtick=1, tickangle=-45, tickfont=dict(size=10))
     st.plotly_chart(fig_pm25, use_container_width=True)
-    pass
 
 # =========================
 # Insights
