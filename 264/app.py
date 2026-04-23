@@ -61,12 +61,12 @@ us_state_to_abbrev = {
 # =========================
 st.sidebar.title("📊 U.S. Housing Environment Analyze Dashboard")
 st.sidebar.caption("Analyze housing prices with income, air quality, climate risk, crime rate, and insurance cost.")
-st.sidebar.divider() # 🔥 加入分隔線，切分區塊
+st.sidebar.divider()
 
-# 3. 導覽列區塊 (Navigation)
+# Navigation
 st.sidebar.subheader("Navigation")
 selected_page = st.sidebar.radio(
-    "Go to:", 
+    "Select a page",
     [
         "🌍 Overview",
         "🏠 House",
@@ -76,26 +76,26 @@ selected_page = st.sidebar.radio(
         "🚨 Crime",
         "💨 PM2.5"
     ],
-    label_visibility="collapsed" # 🔥 關鍵設定：隱藏 radio 原本的標題，解決重複問題
+    label_visibility="collapsed"
 )
-# 2. 篩選器區塊 (Filters)
+
+# Filters
 st.sidebar.subheader("Filters")
 selected_states = st.sidebar.multiselect(
-    "Select states to compare:", # 稍微拉長敘述，更清楚
+    "Select states to compare:",
     options=sorted(df["state"].unique()),
-    default=[], 
-    placeholder="🔍 Choose states..." # 加入放大鏡圖示的 Placeholder
+    default=[],
+    placeholder="🔍 Choose states..."
 )
+
 if len(selected_states) == 0:
-    # 使用 st.sidebar.info 會產生一個淺藍色的提示框
-    st.sidebar.info("🌎 目前顯示: All States")
+    st.sidebar.info("🌍 Currently showing: All States")
     plot_df = df
 else:
-    # 使用 st.sidebar.success 會產生一個淺綠色的提示框，代表篩選已啟動
-    # 順便加上選擇了幾個州的數量提示，會顯得更專業
-    st.sidebar.success(f"🎯 啟用篩選: Selected State Comparison ({len(selected_states)} states)")
+    st.sidebar.success(f" Filter Active: Comparing {len(selected_states)} states")
     plot_df = df[df["state"].isin(selected_states)]
-st.sidebar.divider() # 🔥 再次加入分隔線
+
+st.sidebar.divider()
 
 if selected_page == "🌍 Overview":
     # =========================
@@ -246,65 +246,6 @@ if selected_page == "🌍 Overview":
     )
 
     st.plotly_chart(fig_ins, use_container_width=True)
-
-    # =========================
-    # PM2.5
-    # =========================
-    st.subheader("🌫️ PM2.5 Air Quality")
-    st.markdown("##### *The cost of every breath: Which state offers the safest and cleanest air quality?*")
-
-    pm_sort = st.radio(
-        "Sort by:",
-        ["State Name (A-Z)", "High to Low", "Low to High"],
-        horizontal=True
-    )
-
-    if pm_sort == "High to Low":
-        df_pm = plot_df.sort_values("pm25", ascending=False)
-    elif pm_sort == "Low to High":
-        df_pm = plot_df.sort_values("pm25", ascending=True)
-    else:
-        df_pm = plot_df.sort_values("state", ascending=True)
-
-    fig_pm = px.bar(
-        df_pm,
-        x="state",
-        y="pm25",
-        color="pm25",
-        color_continuous_scale="Viridis",
-        labels={"pm25": "PM2.5", "state": "State"},
-    )
-
-    fig_pm.update_traces(
-        hovertemplate="<b>%{x}</b><br>PM2.5: %{y:.1f} µg/m³<extra></extra>",
-        texttemplate="",
-    )
-
-    fig_pm.update_layout(
-        xaxis_tickangle=-45,
-        showlegend=False,
-        coloraxis_showscale=False,
-        hoverlabel=dict(
-            font=dict(
-                size=24,
-                color="black"
-            ),
-            align="left"
-        )
-    )
-    fig_pm.update_xaxes(
-    title_font=dict(size=20),
-    tickfont=dict(size=20),
-    tickmode='linear',
-    dtick=1,
-    tickangle=-45
-    )
-
-    fig_pm.update_yaxes(
-        title_font=dict(size=20),
-        tickfont=dict(size=20)
-    )
-    st.plotly_chart(fig_pm, use_container_width=True)
 
     # =========================
     # Integrated Risk Assessment: Climate & Crime (Combined Living Risks)
